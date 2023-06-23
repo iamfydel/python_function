@@ -6,3 +6,4 @@ azure-identity
 azure-purview-catalog
 azure-purview-administration
 azure-servicebus
+cryptography
