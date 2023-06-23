@@ -1,0 +1,140 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - azure_functions/support/*
+    exclude:
+      - azure_functions/support/env-support-utils.yml
+      - azure_functions/support/*.yaml
+
+resources:
+  repositories:
+    - repository: pipeline
+      type: git
+      name: platform-azdo-pipeline
+      ref: main
+
+parameters: 
+- name: deploymentStages
+  type: object
+  default: 
+  - name: 'D01'
+    envName: dev
+    coreEnv: d01
+    subscription: nonprod
+    dependsOn: ['build']
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+  - name: 'T01'
+    envName: test
+    coreEnv: t01
+    subscription: nonprod
+    dependsOn: ['build']
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+  - name: 'P01'
+    envName: pat
+    coreEnv: pat
+    subscription: nonprod
+    dependsOn: ['build', 'T01_Deploy_UKS']
+    condition: succeeded()
+
+  - name: 'PROD'
+    envName: prod
+    coreEnv: prod
+    subscription: prod
+    dependsOn: ['build', 'P01_Deploy_UKS']
+    condition: succeeded()
+
+variables:
+  - group: subscription-common
+  - group: environment-common
+  - group: devops-pipeline-common
+  - group: power-bi
+
+  - name: platform
+    value: '$(DATA_PLATFORM_NAME_SHORT)'
+  - name: scope
+    value: 'env'
+  - name: domain
+    value: 'support'
+  - name: service
+    value: 'utils'
+
+  - name: terraformDirectory
+    value: 'azure_functions/support/terraform'
+  - name: terraformStateKey
+    value: '$(platform)-$(scope)-$(domain)-$(service)'
+
+pool:
+  vmImage: '$(ubuntu-version)'
+
+stages:
+  - template: templates/stage/initialise-pipeline.yml@pipeline
+    parameters:
+      useGitVersion: true
+
+  - stage: Build
+    dependsOn: ['Initialise_Pipeline']
+
+    jobs:
+      - template: templates/job/terraform-validate.yml@pipeline
+        parameters:
+          terraformDirectory: '$(terraformDirectory)'
+          terraformModules:
+            - '$(terraformDirectory)'
+
+  - ${{ each stage in parameters.deploymentStages }}:
+    - stage: ${{ stage.name }}_Deploy_UKS
+      dependsOn: ${{ stage.dependsOn }}
+      condition: ${{ stage.condition }}
+      variables:
+        # // change for each subscription and environment //
+        - group: region-uks
+        - group: subscription-${{ stage.subscription }}
+        - group: terraform-state-sub-${{ stage.subscription }}-uks
+        - group: environment-${{ stage.coreEnv }}
+        - group: adp-env-core-infra-${{ stage.coreEnv }}-uks
+        - group: adp-sub-core-infra-${{ stage.subscription }}-uks
+        - group: cherwell-${{ stage.subscription }}
+
+      jobs:
+        - template: templates/job/terraform-apply.yml@pipeline
+          parameters:
+            # // job //
+            platform: $(platform)
+            scope: $(scope)
+            domain: '$(domain)'
+            service: '$(service)'
+
+            publishOutputs: false
+            planOnly: ${{ eq(variables['Build.Reason'], 'PullRequest') }}
+
+            deployments:
+              - jobName: 'Support_Utils' # // change for each deployment object within the deployment job //
+                environment: '${{ stage.envName }}-UKS'
+                dependsOn: []
+                terraformRootModulePath: '$(terraformDirectory)'
+                terraformStateKey: '$(terraformStateKey)'
+                terraformInputVariables:
+                  TF_VAR_region: '$(AZURE_REGION)'
+                  TF_VAR_scope_name: '$(SCOPE_NAME)'
+                  TF_VAR_purview_account_name: '$(adp_sub_core_infra_PURVIEW_ACCOUNT_NAME)'
+                  TF_VAR_service_desk_base_url: '$(SERVICE_DESK_BASE_URL)'
+                  TF_VAR_service_desk_client_id: '$(SERVICE_DESK_CLIENT_ID)'
+                  TF_VAR_service_desk_username: '$(SERVICE_DESK_USERNAME)'
+                  TF_VAR_service_desk_password: '$(SERVICE_DESK_PASSWORD)'
+                  TF_VAR_app_insights_ikey: '$(adp_env_core_infra_APPLICATION_INSIGHTS_IKEY)'
+                  TF_VAR_env_core_infra_resource_group_name: '$(adp_env_core_infra_RESOURCE_GROUP_NAME)'
+                  TF_VAR_adf_account_name: '$(adp_env_core_infra_ADF_ACCOUNT_NAME)'
+                  TF_VAR_datalake_name: '$(adp_env_core_infra_ADLS_STORAGE_ACCOUNT_NAME)'
+                  TF_VAR_databricks_workspace_name: '$(adp_env_core_infra_DATABRICKS_WORKSPACE_NAME)'
+                  TF_VAR_databricks_internal_group_name: '$(adp_env_core_infra_DATABRICKS_INTERNAL_GROUP_DISPLAY_NAME)'
+                  TF_VAR_service_bus_connection: '$(adp_env_core_infra_SERVICE_BUS_ADP_SEND_PRIMARY_CONNECTION_STRING)'
+                  TF_VAR_service_bus_topic: '$(adp_env_core_infra_SERVICE_BUS_NORTHGATE_CUSTOMERS_TOPIC_NAME)'
+                  #PowerBI
+                  TF_VAR_powerbi_tenant_id: '$(AZUREAD_TENANT_ID)'
+                  TF_VAR_powerbi_client_id: '$(power_bi_CLIENT_ID)'
+                  TF_VAR_powerbi_client_secret: '$(power_bi_CLIENT_SECRET)'
