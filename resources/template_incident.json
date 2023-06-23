@@ -1,0 +1,98 @@
+{
+    "busObId": "6dd53665c0c24cab86870a21cf6434ae",
+    "busObPublicId": "",
+    "busObRecId": "",
+    "cacheKey": "",
+    "cacheScope": "Tenant",
+    "fields": [
+        {
+            "dirty": true,
+            "displayName": "Description",
+            "fieldId": "252b836fc72c4149915053ca1131d138",
+            "html": null,
+            "name": "Description",
+            "value": "{{description}}"
+        },
+        {
+            "dirty": true,
+            "displayName": "Customer ID",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:933bd530833c64efbf66f84114acabb3e90c6d7b8f",
+            "html": null,
+            "name": "CustomerRecID",
+            "value": "947bf0224b21ed58630f01417dbb4c2fc9db6e9cda"
+        },
+        {
+            "dirty": true,
+            "displayName": "ConfigItemRecID",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:9354c1c37a136d59ef5e874940bd225039776d5778",
+            "html": null,
+            "name": "ConfigItemRecID",
+            "value": "942ca21f891bfe0bef8a2945ecbb59eb5a7e9772c8"
+        },
+        {
+            "dirty": true,
+            "displayName": "Short Description",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:93e8ea93ff67fd95118255419690a50ef2d56f910c",
+            "html": null,
+            "name": "ShortDescription",
+            "value": "{{error_type}}"
+        },
+        {
+            "dirty": true,
+            "displayName": "Anchor Location",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:94360ae8e31ed90d065ae1490aacbbe4a7568a4259",
+            "html": null,
+            "name": "AnchorLocation",
+            "value": "60061-Ambler Mill"
+        },
+        {
+            "dirty": true,
+            "displayName": "Incident Category",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:9437535eef651e692a38dc4c588a3d6ec8d4790bfc",
+            "html": null,
+            "name": "IncidentCategory",
+            "value": "{{error_type}}"
+        },
+        {
+            "dirty": true,
+            "displayName": "Service",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:936725cd10c735d1dd8c5b4cd4969cb0bd833655f4",
+            "html": null,
+            "name": "Service",
+            "value": "Data Platform"
+        },
+        {
+            "dirty": true,
+            "displayName": "Incident Type",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:9365a6098398ff2551e1c14dd398c466d5a201a9c7",
+            "html": null,
+            "name": "IncidentType",
+            "value": "Incident"
+        },
+        {
+            "dirty": false,
+            "displayName": "Incident Services",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:9436f968fe0796201e396a4da9a19d1c0f373d6241",
+            "html": null,
+            "name": "IncidentServices",
+            "value": "Data Platform"
+        },
+        {
+            "dirty": true,
+            "displayName": "Subcategory",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:1163fda7e6a44f40bb94d2b47cc58f46",
+            "html": null,
+            "name": "Subcategory",
+            "value": "Fault"
+        },
+        {
+            "dirty": true,
+            "displayName": "Call Source",
+            "fieldId": "BO:6dd53665c0c24cab86870a21cf6434ae,FI:93670bdf8abe2cd1f92b1f490a90c7b7d684222e13",
+            "html": null,
+            "name": "Source",
+            "value": "Event"
+        }             
+    ],
+    "persist": true
+}

@@ -1,0 +1,9 @@
+azure-functions==1.10.1
+azure-storage-blob
+azure-core
+requests
+azure-identity
+azure-purview-catalog
+azure-purview-administration
+azure-servicebus
+cryptography

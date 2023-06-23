@@ -1,0 +1,27 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    },
+    {
+      "name": "outputblob",
+      "type": "blob",
+      "dataType": "string",
+      "path": "error-files/{pipeline_run_id}/{rand-guid}.json",
+      "connection": "errorlog",
+      "direction": "out"
+    }
+  ]
+}

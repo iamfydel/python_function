@@ -1,0 +1,6 @@
+.git*
+.vscode
+local.settings.json
+test
+terraform
+env-support-utils.yml
